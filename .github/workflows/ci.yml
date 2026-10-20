@@ -1,0 +1,45 @@
+name: Data Engineering CI Pipeline
+
+# Dispara a verificação em qualquer push ou Pull Request para a branch principal (main)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  quality-and-tests:
+    name: Lint, Unit Tests & Medallion Execution
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Faz o checkout do código do repositório na máquina virtual do GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configura o Python 3.11 com cache de pacotes pip para acelerar execuções futuras
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # 3. Instala o projeto e as dependências de desenvolvimento e produção
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      # 4. Executa verificação estática de estilo e qualidade de código via Ruff
+      - name: Run static code analysis (Ruff)
+        run: python -m ruff check src/ tests/
+
+      # 5. Executa a suíte de testes automatizados exigindo cobertura mínima de 80%
+      - name: Run unit and integration tests (Pytest)
+        run: python -m pytest --cov=src --cov-fail-under=80 tests/
+
+      # 6. Executa um teste de fumaça (Smoke Test) rodando o pipeline completo Bronze -> Silver -> Gold
+      - name: Execute end-to-end Medallion Pipeline
+        run: |
+          python -m src.ingestion.extractor
+          python -m src.etl.processor

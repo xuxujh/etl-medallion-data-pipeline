@@ -1,0 +1,31 @@
+# Ignora todos os arquivos de dados (Parquet, CSV, DuckDB) gerados localmente nas camadas Medallion
+data/bronze/*
+data/silver/*
+data/gold/*
+
+# Exceção: mantém o rastreamento dos arquivos .gitkeep para preservar a árvore de diretórios no GitHub
+!data/**/.gitkeep
+
+# Ignora bytecode compilado e diretórios de cache do interpretador Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignora ambientes virtuais locais (venv ou Conda locais)
+.venv/
+venv/
+env/
+
+# Ignora variáveis de ambiente sensíveis (credenciais de banco de dados, chaves de API)
+.env
+
+# Ignora artefatos de cache gerados pelo executor de testes (pytest), linter (ruff) e cobertura (coverage)
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Ignora artefatos de empacotamento e build do setuptools
+dist/
+build/
+*.egg-info/

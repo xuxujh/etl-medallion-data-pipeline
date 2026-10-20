@@ -1,0 +1,17 @@
+# Parâmetros globais de controle de execução do pipeline
+pipeline:
+  name: "logistics_transactions_etl"               # Identificador lógico do job de ETL
+  batch_size: 10000                                # Quantidade de registros extraídos por lote
+  random_seed: 42                                  # Semente fixa para reprodutibilidade
+
+# Caminhos de armazenamento locais seguindo a topologia Medallion (Bronze -> Silver -> Gold)
+storage:
+  bronze_path: "data/bronze/raw_transactions.parquet"        # Dados brutos validados estruturalmente
+  silver_path: "data/silver/clean_transactions.parquet"      # Dados limpos, deduplicados e tipados
+  gold_path: "data/gold/agg_carrier_metrics.parquet"         # Tabela agregada para consumo analítico
+  duckdb_database: "data/gold/analytics_warehouse.duckdb"    # Banco de dados OLAP persistente DuckDB
+
+# Parâmetros de tolerância e regras de negócio para auditoria de qualidade de dados
+validation:
+  max_null_ratio: 0.05                             # Limite máximo aceitável de valores nulos (5%)
+  min_freight_value: 0.01                          # Valor mínimo permitido para validação de frete

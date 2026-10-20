@@ -1,0 +1,18 @@
+# Ignora ambientes virtuais locais e caches do Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Ignora histórico do Git e configurações locais do editor
+.git/
+.vscode/
+
+# Ignora dados gerados localmente na máquina host
+data/bronze/*.parquet
+data/silver/*.parquet
+data/gold/*.parquet
+data/gold/*.duckdb
