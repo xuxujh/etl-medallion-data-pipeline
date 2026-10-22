@@ -11,7 +11,7 @@ import random
 import uuid
 
 # Manipulação de datas, intervalos de tempo e fusos horários (UTC)
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 # Manipulação segura de caminhos de sistema de arquivos entre diferentes SOs
 from pathlib import Path
@@ -59,7 +59,7 @@ def generate_raw_batch(batch_size: int, seed: int) -> list[dict[str, Any]]:
     # Estados possíveis do ciclo de vida do pedido
     statuses = ["DELIVERED", "IN_TRANSIT", "DELAYED", "CANCELLED"]
     # Define o marco temporal inicial em UTC
-    base_time = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    base_time = datetime(2026, 1, 1, tzinfo=UTC)
 
     # Inicializa a lista que armazenará os dicionários brutos
     records: list[dict[str, Any]] = []
@@ -118,7 +118,7 @@ def validate_and_persist_bronze(raw_records: list[dict[str, Any]], output_path: 
     df_bronze = pl.DataFrame(valid_rows)
     # Adiciona coluna de metadados registrando o instante da ingestão em UTC
     df_bronze = df_bronze.with_columns(
-        pl.lit(datetime.now(timezone.utc)).alias("ingested_at_utc")
+        pl.lit(datetime.now(UTC)).alias("ingested_at_utc")
     )
     # Persiste o DataFrame em formato Apache Parquet com compressão Snappy
     df_bronze.write_parquet(output_path, compression="snappy")

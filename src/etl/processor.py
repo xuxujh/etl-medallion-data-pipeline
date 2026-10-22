@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 
 # Manipulação de carimbos de tempo em UTC para auditoria de processamento
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 # Manipulação orientada a objetos de caminhos de diretórios e arquivos
 from pathlib import Path
@@ -88,7 +88,7 @@ def transform_bronze_to_silver(
                     | (pl.col("delivery_time_hours") > 72.0)
                 ).alias("is_delayed"),
                 # Registra o instante exato do processamento da camada Silver em UTC
-                pl.lit(datetime.now(timezone.utc)).alias("processed_at_utc"),
+                pl.lit(datetime.now(UTC)).alias("processed_at_utc"),
             ]
         )
         # Reordena pelo carimbo de tempo original para otimizar compressão por blocos no Parquet
